@@ -31,7 +31,7 @@ public class App {
     throws ExecutionException, InterruptedException {
         val key = UUID.randomUUID().toString() + ":id1548779";
         val value = "{ 'contrato':'1202458045-JM, 'nfe':'125578-45' }";
-        return service.send(KafkaTopics.PILOTO2, key, value);
+        return service.send(KafkaTopics.TESTE, key, value);
     }
 
     private static RecordMetadata sendEmailRecord(KafkaService service)

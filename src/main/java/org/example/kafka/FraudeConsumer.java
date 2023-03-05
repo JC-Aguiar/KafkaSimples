@@ -16,7 +16,7 @@ public class FraudeConsumer {
         val consumer = KafkaService.newConsumer(FraudeConsumer.class.getSimpleName());
         log.info("Iniciando observer...");
         while(true) {
-            consumer.get(KafkaTopics.PILOTO2, CYCLE_TIME);
+            consumer.get(KafkaTopics.TESTE, CYCLE_TIME);
         }
     }
 

@@ -57,7 +57,7 @@ public class KafkaService implements Closeable {
     }
 
     public RecordMetadata send(KafkaTopics topic, String key, String value) throws ExecutionException, InterruptedException {
-        val record = new ProducerRecord<>(topic.value, key, value);
+        val record = new ProducerRecord<>(topic.topicName, key, value);
         return producer.send(record, this::callback).get();
     }
 
@@ -74,11 +74,11 @@ public class KafkaService implements Closeable {
 
     public List<String> get(KafkaTopics topic, Long duration) {
         duration = duration < 50 ? 50 : duration;
-        log.info("Procurando por eventos sob tópico '{}'...", topic.value);
+        log.info("Procurando por eventos sob tópico '{}'...", topic.topicName);
         if(topic.equals(KafkaTopics.ALL))
-            consumer.subscribe(Pattern.compile(topic.value));
+            consumer.subscribe(Pattern.compile(topic.topicName));
         else
-            consumer.subscribe(Collections.singletonList(topic.value));
+            consumer.subscribe(Collections.singletonList(topic.topicName));
         val records = consumer.poll(Duration.ofMillis(duration));
         return recordsHandler(records);
     }
