@@ -12,10 +12,11 @@ public class KafkaServiceConfig {
 
     static {
         KAFKA_PROPERTIES.setProperty(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, "127.0.0.1:9092");
-        KAFKA_PROPERTIES.setProperty(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, GsonSerializer.class.getName());
+        KAFKA_PROPERTIES.setProperty(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class.getName());
         KAFKA_PROPERTIES.setProperty(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, GsonSerializer.class.getName());
-        KAFKA_PROPERTIES.setProperty(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, GsonSerializer.class.getName());
-        KAFKA_PROPERTIES.setProperty(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, GsonSerializer.class.getName());
+        KAFKA_PROPERTIES.setProperty(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class.getName());
+        KAFKA_PROPERTIES.setProperty(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, GsonDeserializer.class.getName());
+        KAFKA_PROPERTIES.setProperty(GsonDeserializer.TYPE_CONFIG, String.class.getName());
     }
 
 }

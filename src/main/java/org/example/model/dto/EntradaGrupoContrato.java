@@ -1,11 +1,10 @@
 package org.example.model.dto;
 
-import br.com.ppware.app.api.CampoObrigatorio;
-import br.com.ppware.app.api.EntradaComum;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 import lombok.experimental.SuperBuilder;
+import org.example.util.api.CampoObrigatorio;
+import org.example.util.api.EntradaComum;
 
 import java.io.IOException;
 import java.io.Writer;
@@ -18,11 +17,9 @@ import java.io.Writer;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class EntradaGrupoContrato extends EntradaComum {
 
-    @JsonProperty("grupo")
     @CampoObrigatorio(criterio = CampoObrigatorio.Criterio.NAO_VAZIO)
     private String grupo;
 
-    @JsonProperty("contrato")
     @CampoObrigatorio(criterio = CampoObrigatorio.Criterio.NAO_VAZIO)
     private String contrato;
 

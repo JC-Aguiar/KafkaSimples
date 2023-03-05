@@ -1,23 +1,23 @@
 package org.example.kafka;
 
 
+import lombok.experimental.SuperBuilder;
 import lombok.extern.slf4j.Slf4j;
-import lombok.val;
-import org.example.kafka.core.KafkaService;
+import org.example.kafka.core.KafkaConsumerFactory;
 import org.example.kafka.core.KafkaTopics;
+import org.example.kafka.core.SimpleMessage;
 
 @Slf4j
-public class LogConsumer {
-
-    private static final Long CYCLE_TIME = 1000L;
+@SuperBuilder
+public class LogConsumer extends KafkaConsumerFactory<SimpleMessage> {
 
     public static void main(String[] args) {
-        log.info("Criando novo Kafka Consumer...");
-        val consumer = KafkaService.newConsumer(LogConsumer.class.getSimpleName());
-        log.info("Iniciando observer...");
-        while(true) {
-            consumer.get(KafkaTopics.ALL, CYCLE_TIME);
-        }
+        FraudeConsumer.builder()
+            .group(LogConsumer.class.getSimpleName())
+            .topic(KafkaTopics.ALL)
+            .classType(SimpleMessage.class)
+            .build()
+            .run();
     }
 
 }

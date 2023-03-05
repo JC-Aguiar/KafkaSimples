@@ -3,8 +3,6 @@ package org.example.model.dto;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
-import javax.validation.constraints.NotBlank;
-
 @Getter
 @NoArgsConstructor
 @ToString
@@ -12,10 +10,9 @@ import javax.validation.constraints.NotBlank;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class EntradaNumeroFatura {
 
-    @NotBlank(message = "Campo obrigatório 'nrFatura' não informado.")
     private String nrFatura;
 
-    public void setNrFatura(@NotBlank(message = "Campo obrigatório 'nrFatura' não informado.") String nrFatura) {
+    public void setNrFatura(String nrFatura) {
         this.nrFatura = nrFatura;
     }
 }

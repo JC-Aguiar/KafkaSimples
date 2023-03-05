@@ -1,11 +1,8 @@
 package org.example.model.dto;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
-import javax.validation.constraints.NotBlank;
 import java.io.Serializable;
 import java.util.Optional;
 
@@ -17,16 +14,10 @@ import java.util.Optional;
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class RetornoFatura implements Serializable {
 
-    @JsonProperty("nrFatura")
-    @NotBlank(message = "Campo obrigatório 'nrFatura' está vazio.")
     String nrFatura;
 
-    @JsonProperty("codigoRetorno")
-    @NotBlank(message = "Campo obrigatório 'codigoRetorno' está vazio.")
     String codigoRetorno;
 
-    @JsonProperty("mensagem")
-    @NotBlank(message = "Campo obrigatório 'descrição' está vazio.")
     String mensagem;
 
     public enum StatusFatura{
@@ -38,7 +29,7 @@ public class RetornoFatura implements Serializable {
         COD99("COD99", "Erro inesperado.");
         public final String codigo;
         public final String mensagem;
-        StatusFatura(@NotBlank String codigo, @NotBlank String mensagem) {
+        StatusFatura(String codigo, String mensagem) {
             this.codigo = codigo;
             this.mensagem = mensagem;
         }
@@ -79,7 +70,6 @@ public class RetornoFatura implements Serializable {
         return status.isEmpty() ? pendente(fatura) : paga(fatura);
     }
 
-    @JsonIgnore
     public StatusFatura getStatusEnum() {
         return  StatusFatura.valueOf(this.codigoRetorno);
     }

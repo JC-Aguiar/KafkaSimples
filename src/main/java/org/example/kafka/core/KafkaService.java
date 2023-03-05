@@ -15,6 +15,7 @@ import org.apache.kafka.clients.producer.RecordMetadata;
 
 import java.io.Closeable;
 import java.io.IOException;
+import java.lang.reflect.ParameterizedType;
 import java.sql.Timestamp;
 import java.time.Duration;
 import java.time.format.DateTimeFormatter;
@@ -29,50 +30,51 @@ import java.util.regex.Pattern;
 @Getter
 @ToString
 @EqualsAndHashCode
-public class KafkaService implements Closeable {
+public class KafkaService<T> implements Closeable {
 
     private final Properties properties = KafkaServiceConfig.KAFKA_PROPERTIES;
     private final String group;
-    private KafkaProducer<String, String> producer;
-    private KafkaConsumer<String, String> consumer;
+    private final Class<T> classType;
+    private KafkaProducer<String, T> producer;
+    private KafkaConsumer<String, T> consumer;
     private final DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yy/MM/dd HH:mm:ss:SS");
 
-    private KafkaService(String group) {
+    public KafkaService(String group, Class<T> classType) {
         this.group = group;
-        log.info("Criando novo Kafka Service: group={}, properties={}", this.group, this.properties);
+        this.classType = classType;
+        newConsumer(this);
+        newProducer(this);
+        log.info("Criando novo Kafka Service: group={}, type={}, properties={}",
+            this.group, this.classType.getSimpleName(), this.properties);
     }
 
-    public static KafkaService newConsumer(String group) {
-        val kafka = new KafkaService(group);
-        kafka.properties.setProperty(ConsumerConfig.MAX_POLL_RECORDS_CONFIG, "1");
-        kafka.properties.setProperty(ConsumerConfig.GROUP_ID_CONFIG, group);
-        kafka.consumer = new KafkaConsumer<String, String>(kafka.properties);
-        return kafka;
+    private static void newConsumer(KafkaService<?> service) {
+        service.properties.setProperty(ConsumerConfig.MAX_POLL_RECORDS_CONFIG, "1");
+        service.properties.setProperty(ConsumerConfig.GROUP_ID_CONFIG, service.group);
+        service.consumer = new KafkaConsumer<>(service.properties);
     }
 
-    public static KafkaService newProducer(String group) {
-        val kafka = new KafkaService(group);
-        kafka.producer = new KafkaProducer<String, String>(kafka.properties);
-        return kafka;
+    private static void newProducer(KafkaService<?> service) {
+        service.producer = new KafkaProducer<>(service.properties);
     }
 
-    public RecordMetadata send(KafkaTopics topic, String key, String value) throws ExecutionException, InterruptedException {
-        val record = new ProducerRecord<>(topic.topicName, key, value);
+    public RecordMetadata send(KafkaTopics topic, String key, T value) throws ExecutionException, InterruptedException {
+        val record = new ProducerRecord<String, T>(topic.topicName, key, value);
         return producer.send(record, this::callback).get();
     }
 
     private void callback(RecordMetadata record, Exception ex) {
         if(ex != null)  ex.printStackTrace();
-        else sendlLog(record);
+        else sendLog(record);
     }
 
-    private void sendlLog(RecordMetadata record) {
+    private void sendLog(RecordMetadata record) {
         val date = new Timestamp(record.timestamp()).toLocalDateTime().format(dateTimeFormatter);
         log.info("Evento enviado com sucesso: [{}] date={}, partition={}, offset={}",
             record.topic(), date, record.partition(), record.offset());
     }
 
-    public List<String> get(KafkaTopics topic, Long duration) {
+    public List<T> get(KafkaTopics topic, Long duration) {
         duration = duration < 50 ? 50 : duration;
         log.info("Procurando por eventos sob tópico '{}'...", topic.topicName);
         if(topic.equals(KafkaTopics.ALL))
@@ -83,22 +85,22 @@ public class KafkaService implements Closeable {
         return recordsHandler(records);
     }
 
-    private List<String> recordsHandler(ConsumerRecords<String, String> records) {
+    private List<T> recordsHandler(ConsumerRecords<String, T> records) {
         if(records.isEmpty()) {
             log.info("Nenhum evento disponível");
             return null;
         }
         else {
             log.info("Identificado total de {} eventos.", records.count());
-            val recordsValues = new ArrayList<String>();
-            for(ConsumerRecord<String, String> record : records) {
+            val recordsValues = new ArrayList<T>();
+            for(ConsumerRecord<String, T> record : records) {
                 recordsValues.add(getRecordValue(record));
             }
             return recordsValues;
         }
     }
 
-    private String getRecordValue(ConsumerRecord<String, String> record) {
+    private T getRecordValue(ConsumerRecord<String, T> record) {
         val date = new Timestamp(record.timestamp()).toLocalDateTime().format(dateTimeFormatter);
         log.info("Evento: [{}] date={}, key={}, value={}", record.topic(), date, record.key(), record.value());
         log.info("Processado evento...");

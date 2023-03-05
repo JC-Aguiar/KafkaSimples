@@ -1,23 +1,23 @@
 package org.example.kafka;
 
 
+import lombok.experimental.SuperBuilder;
 import lombok.extern.slf4j.Slf4j;
-import lombok.val;
-import org.example.kafka.core.KafkaService;
+import org.example.kafka.core.KafkaConsumerFactory;
 import org.example.kafka.core.KafkaTopics;
+import org.example.model.dto.EmailDto;
 
 @Slf4j
-public class EmailConsumer {
-
-    private static final Long CYCLE_TIME = 1000L;
+@SuperBuilder
+public class EmailConsumer extends KafkaConsumerFactory<EmailDto> {
 
     public static void main(String[] args) {
-        log.info("Criando novo Kafka Consumer...");
-        val consumer = KafkaService.newConsumer(EmailConsumer.class.getSimpleName());
-        log.info("Iniciando observer...");
-        while(true) {
-            consumer.get(KafkaTopics.EMAIL, CYCLE_TIME);
-        }
+        EmailConsumer.builder()
+            .group(EmailConsumer.class.getSimpleName())
+            .topic(KafkaTopics.EMAIL)
+            .classType(EmailDto.class)
+            .build()
+            .run();
     }
 
 }

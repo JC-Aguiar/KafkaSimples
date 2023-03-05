@@ -1,10 +1,10 @@
 package org.example.model.dto;
 
-import br.com.ppware.app.api.EntradaComum;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
 import lombok.Value;
+import org.example.util.api.EntradaComum;
 
 @Value
 @AllArgsConstructor
