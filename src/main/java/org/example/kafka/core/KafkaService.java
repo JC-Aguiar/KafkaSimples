@@ -12,6 +12,7 @@ import org.apache.kafka.clients.consumer.KafkaConsumer;
 import org.apache.kafka.clients.producer.KafkaProducer;
 import org.apache.kafka.clients.producer.ProducerRecord;
 import org.apache.kafka.clients.producer.RecordMetadata;
+import org.apache.kafka.common.serialization.StringDeserializer;
 
 import java.io.Closeable;
 import java.io.IOException;
@@ -52,6 +53,10 @@ public class KafkaService<T> implements Closeable {
         service.properties.setProperty(ConsumerConfig.MAX_POLL_RECORDS_CONFIG, "1");
         service.properties.setProperty(ConsumerConfig.GROUP_ID_CONFIG, service.group);
         service.consumer = new KafkaConsumer<>(service.properties);
+        if(service.classType.equals(String.class)) {
+            service.properties.setProperty(
+                ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class.getName());
+        }
     }
 
     private static void newProducer(KafkaService<?> service) {

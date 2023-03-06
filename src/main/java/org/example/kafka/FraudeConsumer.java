@@ -13,7 +13,7 @@ import java.io.IOException;
 
 @Slf4j
 @SuperBuilder
-public class FraudeConsumer extends KafkaConsumerFactory<SimpleMessage> {
+public class FraudeConsumer extends KafkaConsumerFactory<String> {
 
     public static void main(String[] args) {
 //        log.info("Criando novo Kafka Consumer...");
@@ -29,7 +29,7 @@ public class FraudeConsumer extends KafkaConsumerFactory<SimpleMessage> {
         FraudeConsumer.builder()
             .group(FraudeConsumer.class.getSimpleName())
             .topic(KafkaTopics.TESTE)
-            .classType(SimpleMessage.class)
+            .classType(String.class)
             .build()
             .run();
     }

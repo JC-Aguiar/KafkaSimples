@@ -21,7 +21,7 @@ public class App {
 
     public static void main(String[] args) {
         for (int i = 0; i < 150; i++) {
-            try(val testeProducer = new KafkaService<>(App.class.getSimpleName(), SimpleMessage.class);
+            try(val testeProducer = new KafkaService<>(App.class.getSimpleName(), String.class);
                 val emailProducer = new KafkaService<>(App.class.getSimpleName(), EmailDto.class)) {
                     testNFRecord(testeProducer);
                     sendEmailRecord(emailProducer);
@@ -31,13 +31,13 @@ public class App {
         }
     }
 
-    private static RecordMetadata testNFRecord(KafkaService<SimpleMessage> service)
+    private static RecordMetadata testNFRecord(KafkaService<String> service)
     throws ExecutionException, InterruptedException {
         val key = UUID.randomUUID().toString() + ":id1548779";
         val contrato = getXNumerosInt(10) + "-JM";
         val nf = getXNumerosInt(6) + "-" + getInt();
-        val message = new SimpleMessage(contrato + ", " + nf);
-        return service.send(KafkaTopics.TESTE, key, message);
+//        val message = new SimpleMessage(contrato + ", " + nf);
+        return service.send(KafkaTopics.TESTE, key, contrato + ", " + nf);
     }
 
     private static RecordMetadata sendEmailRecord(KafkaService<EmailDto> service)

@@ -14,7 +14,7 @@ import java.util.List;
 @Value
 @Builder
 @ToString
-@FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
+@FieldDefaults(level = AccessLevel.PRIVATE)
 public class EmailDto implements Serializable {
 
     String email;

@@ -1,16 +1,21 @@
 package org.example.kafka.core;
 
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import lombok.val;
 import org.apache.kafka.common.header.Headers;
 import org.apache.kafka.common.serialization.Serializer;
+import org.example.util.LocalDateTimeSerializer;
 
 import java.nio.charset.StandardCharsets;
+import java.time.LocalDateTime;
 import java.util.Map;
 
 public class GsonSerializer<T> implements Serializer<T> {
 
-    private final Gson gson = new Gson();
+    private final Gson gson = new GsonBuilder()
+        .registerTypeAdapter(LocalDateTime.class, new LocalDateTimeSerializer())
+        .create();
 
     @Override
     public void configure(Map<String, ?> configs, boolean isKey) {
